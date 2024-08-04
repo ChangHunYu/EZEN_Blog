@@ -1,21 +1,15 @@
 spring:
   application:
     name: blog
-  datasource:
-    url: jdbc:mysql://localhost:55432/blog-db
-    username: ezen
-    password: password
-    driver-class-name: org.postgresql.Driver
+  profiles:
+    active: dev
   jpa:
-    properties:
+  properties:
       hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
         show_sql: true
         use_sql_comment: true
         format_sql: true
         highlight_sql: true
-    hibernate:
-      ddl-auto: create  # ??: ?? ????? 'update' ?? 'validate'? ?????
   servlet:
     multipart:
       max-file-size: 10MB
@@ -26,21 +20,6 @@ server:
 
 mybatis:
   mapper-locations: classpath:mapper/**/*.xml
-
-logging:
-  level:
-    root: INFO
-    org.springframework.web: DEBUG
-    org.hibernate:
-      SQL: DEBUG
-      orm.jdbc.bind: TRACE
-    your.package.name: DEBUG  # ?? ??? ???? ?????
-
-minio:
-  url: http://localhost:9000
-  accessKey: ezen
-  secretKey: password
-  bucket: user-profile-images
 
 jwt:
   secret: uz7MtIBd5PpX0knZuSB4RLlgFJ/v7ySsMofaMGZ1wec=
