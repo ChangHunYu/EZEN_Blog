@@ -11,6 +11,11 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -34,20 +39,24 @@ class UserServiceTest {
     private static MultipartFile file;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws IOException {
         user = User.builder()
                 .username("testuser")
+                .nickname("testUserNickName")
                 .email("test@example.com")
                 .password("password")
                 .build();
         user = userRepository.save(user);
         em.clear();
 
+        Path path = Paths.get("src/test/resources/img/chrome.svg"); // 테스트 리소스 경로
+        byte[] content = Files.readAllBytes(path); // 파일 내용을 바이트 배열로 읽기
+
         file = new MockMultipartFile(
                 "file",
-                "test-image.jpg",
-                "image/jpeg",
-                "test image content".getBytes()
+                "chrome.svg",
+                "image/svg+xml", // MIME 타입
+                content // 파일 내용
         );
     }
 
@@ -62,10 +71,11 @@ class UserServiceTest {
 
         // then
         User updatedUser = userRepository.findById(user.getId()).orElseThrow();
-        String imageUrl = updatedUser.getCurrentProfileImageUrl();
+        String imageName = updatedUser.getCurrentProfileImageName();
+        System.out.println(imageName);
 
-        assertNotNull(imageUrl);
-        assertTrue(imageUrl.startsWith("/minio/test-user-profile-images/"));
+        assertNotNull(imageName);
+        assertTrue(imageName.contains("chrome.svg"));
     }
 
     @Test
@@ -82,6 +92,7 @@ class UserServiceTest {
 
         // Then
         assertNotNull(imageUrl);
-        assertTrue(imageUrl.startsWith("/minio/test-user-profile-images/"));
+        System.out.println(imageUrl);
+        assertTrue(imageUrl.contains("/test-user-profile-images/"));
     }
 }

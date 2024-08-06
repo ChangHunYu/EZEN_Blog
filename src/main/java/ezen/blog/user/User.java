@@ -43,18 +43,18 @@ public class User extends BaseTimeEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Comment> comments = new ArrayList<>();
 
-    public String getCurrentProfileImageUrl() {
+    public String getCurrentProfileImageName() {
         return profileImages.stream()
                 .filter(UserProfileImage::isActive)
                 .findFirst()
-                .map(UserProfileImage::getImageUrl)
+                .map(UserProfileImage::getImageName)
                 .orElse(null);
     }
 
     public void addProfileImage(String imageUrl) {
         UserProfileImage newImage = UserProfileImage.builder()
                 .user(this)
-                .imageUrl(imageUrl)
+                .imageName(imageUrl)
                 .active(true)
                 .build();
 

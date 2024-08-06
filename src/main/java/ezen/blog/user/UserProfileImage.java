@@ -19,8 +19,8 @@ public class UserProfileImage extends BaseTimeEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(nullable = false)
-    private String imageUrl;
+    @Column(nullable = false, length = 512)
+    private String imageName;
 
     @Column(nullable = false)
     private boolean active;
