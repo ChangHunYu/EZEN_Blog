@@ -81,7 +81,7 @@ public class Post extends BaseTimeEntity {
     public void addImage(String imageUrl) {
         PostImage postImage = PostImage.builder()
                 .post(this)
-                .imageUrl(imageUrl)
+                .imageName(imageUrl)
                 .orderIndex(this.images.size())
                 .build();
         this.images.add(postImage);
@@ -98,10 +98,10 @@ public class Post extends BaseTimeEntity {
         }
     }
 
-    public List<String> getOrderedImageUrls() {
+    public List<String> getOrderedImageNames() {
         return this.images.stream()
                 .sorted(Comparator.comparing(PostImage::getOrderIndex))
-                .map(PostImage::getImageUrl)
+                .map(PostImage::getImageName)
                 .collect(Collectors.toList());
     }
 }

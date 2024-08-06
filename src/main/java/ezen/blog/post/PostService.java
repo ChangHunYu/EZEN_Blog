@@ -1,7 +1,6 @@
 package ezen.blog.post;
 
 import ezen.blog.infrastructure.minio.MinioService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -46,6 +45,6 @@ public class PostService {
         Post post = postRepository.findById(postId)
             .orElseThrow(() -> new RuntimeException("Post not found"));
 
-        return post.getOrderedImageUrls();
+        return post.getOrderedImageNames();
     }
 }

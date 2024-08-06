@@ -20,7 +20,7 @@ public class PostImage extends BaseTimeEntity {
     private Post post;
 
     @Column(nullable = false)
-    private String imageUrl;
+    private String imageName;
 
     @Column(nullable = false)
     private Integer orderIndex;
