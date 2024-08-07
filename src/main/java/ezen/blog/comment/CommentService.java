@@ -8,6 +8,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.apache.ibatis.javassist.NotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
@@ -45,6 +46,33 @@ public class CommentService {
                 .postId(savedComment.getPost().getId())
                 .userNickname(savedComment.getUser().getNickname())
                 .content(savedComment.getContent())
+                .createdAt(savedComment.getCreatedAt())
+                .build();
+    }
+
+    public List<CommentResponseDTO> findAll() {
+        List<Comment> comments = commentRepository.findAll();
+        return comments.stream().map(
+                c->CommentResponseDTO.builder()
+                        .id(c.getId())
+                        .postId(c.getPost().getId())
+                        .userNickname(c.getUser().getNickname())
+                        .content(c.getContent())
+                        .createdAt(c.getCreatedAt())
+                        .build()).toList();
+    }
+
+    public CommentResponseDTO findById(Long id) {
+        Comment comment = commentRepository.findById(id).orElse(null);
+        if (comment == null) {
+            throw new EntityNotFoundException("Comment Not Found");
+        }
+        return CommentResponseDTO.builder()
+                .id(comment.getId())
+                .postId(comment.getPost().getId())
+                .userNickname(comment.getUser().getNickname())
+                .content(comment.getContent())
+                .createdAt(comment.getCreatedAt())
                 .build();
     }
 }

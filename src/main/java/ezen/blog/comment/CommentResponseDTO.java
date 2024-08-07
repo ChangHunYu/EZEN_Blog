@@ -9,6 +9,7 @@ public record CommentResponseDTO(
         Long id,
         String userNickname,
         Long postId,
-        String content
+        String content,
+        LocalDateTime createdAt
 ) {
 }
