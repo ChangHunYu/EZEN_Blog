@@ -1,5 +1,9 @@
 package ezen.blog.comment;
 
+import ezen.blog.post.Post;
+import ezen.blog.post.PostRepository;
+import ezen.blog.user.User;
+import ezen.blog.user.UserRepository;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.ExtractableResponse;
@@ -24,12 +28,36 @@ class CommentAcceptanceTest {
     int port;
 
     @Autowired
-    CommentRepository commentRepository;
+    UserRepository userRepository;
     @Autowired
-    CommentController commentController;
+    PostRepository postRepository;
 
+    private static User user1;
+    private static User user2;
+    private static Post post1;
     @BeforeEach
     void setUp() {
+        user1 = userRepository.save(
+                User.builder()
+                        .nickname("홍길동")
+                        .username("홍길동")
+                        .email("test@test.com")
+                        .password("password")
+                        .build());
+        user2 = userRepository.save(
+                User.builder()
+                        .nickname("Chrome")
+                        .username("크롬")
+                        .email("chrome@google.com")
+                        .password("password")
+                        .build());
+        post1 = postRepository.save(
+                Post.builder()
+                        .title("test")
+                        .content("Hello World")
+                        .user(user1)
+                        .build());
+
         RestAssured.port = port;
     }
 
@@ -37,7 +65,11 @@ class CommentAcceptanceTest {
     @DisplayName("Comment 저장 테스트")
     void create() {
         //given
-        CommentRequestDTO requestDTO = new CommentRequestDTO("Hello World");
+        CommentRequestDTO requestDTO = CommentRequestDTO.builder()
+                .content("크롬이 쓴 댓글")
+                .userNickname(user2.getNickname())
+                .postId(post1.getId())
+                .build();
 
         ExtractableResponse<Response> response = RestAssured
                 .given().log().all()
@@ -47,10 +79,12 @@ class CommentAcceptanceTest {
                 .post("/comments")
                 .then().log().all()
                 .extract();
-        String content = response.jsonPath().getString("content");
+        CommentResponseDTO responseDTO = response.jsonPath().getObject("", CommentResponseDTO.class);
 
         Assertions.assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
-        Assertions.assertThat(content).isEqualTo(requestDTO.content());
+        Assertions.assertThat(responseDTO.userNickname()).isEqualTo(requestDTO.userNickname());
+        Assertions.assertThat(responseDTO.postId()).isEqualTo(requestDTO.postId());
+        Assertions.assertThat(responseDTO.content()).isEqualTo(requestDTO.content());
     }
 
 
