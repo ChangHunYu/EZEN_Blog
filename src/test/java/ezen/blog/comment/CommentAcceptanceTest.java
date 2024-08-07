@@ -25,6 +25,7 @@ import org.springframework.test.context.jdbc.Sql;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @ActiveProfiles("test")
 @Sql("/truncate.sql")
@@ -41,6 +42,8 @@ class CommentAcceptanceTest {
     CommentService commentService;
     @PersistenceContext
     EntityManager em;
+    @Autowired
+    CommentRepository commentRepository;
 
     private static User user1;
     private static User user2;
@@ -204,5 +207,33 @@ class CommentAcceptanceTest {
         Assertions.assertThat(responseDTO.userNickname()).isEqualTo(updateRequest1.userNickname());
         Assertions.assertThat(responseDTO.postId()).isEqualTo(updateRequest1.postId());
         Assertions.assertThat(responseDTO.content()).isEqualTo(updateRequest1.content());
+    }
+
+
+    @Test
+    @DisplayName("Comment delete 테스트")
+    void delete() {
+        //given
+        CommentRequestDTO requestDTO1 = CommentRequestDTO.builder()
+                .content("크롬이 쓴 댓글")
+                .userNickname(user2.getNickname())
+                .postId(post1.getId())
+                .build();
+        CommentResponseDTO createDTO = commentService.create(requestDTO1);
+        em.clear();
+
+        //when
+        ExtractableResponse<Response> response = RestAssured
+                .given().log().all()
+                .contentType(ContentType.JSON)
+                .when()
+                .delete("/comments/"+createDTO.id())
+                .then().log().all()
+                .extract();
+
+        //then
+        Comment comment = commentRepository.findById(createDTO.id()).orElse(null);
+        Assertions.assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+        Assertions.assertThat(comment.isDeleted()).isTrue();
     }
 }

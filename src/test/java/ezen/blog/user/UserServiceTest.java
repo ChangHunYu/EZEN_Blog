@@ -1,5 +1,6 @@
 package ezen.blog.user;
 
+import ezen.blog.config.MinioTestConfig;
 import ezen.blog.infrastructure.minio.MinioService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -9,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestExecutionListeners;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -17,9 +20,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.context.TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS;
+
 
 @SpringBootTest
 @ActiveProfiles("test")
+@Sql("/truncate.sql")
+@TestExecutionListeners(listeners = MinioTestConfig.MinioCleanupListener.class, mergeMode = MERGE_WITH_DEFAULTS)
 class UserServiceTest {
 
     @Autowired

@@ -100,4 +100,15 @@ public class CommentService {
                 .createdAt(savedComment.getCreatedAt())
                 .build();
     }
+
+    @Transactional
+    public void delete(Long id) {
+        Comment comment = commentRepository.findByIdAndIsDeletedFalse(id);
+        if (comment == null) {
+            throw new EntityNotFoundException("Comment Not Found");
+        }
+
+        comment.softDelete();
+        commentRepository.save(comment);
+    }
 }

@@ -29,8 +29,7 @@ public abstract class BaseTimeEntity {
 
     private LocalDateTime deletedAt;
 
-    @PreRemove
-    private void preRemove() {
+    public void softDelete() {
         this.isDeleted = true;
         this.deletedAt = LocalDateTime.now();
     }
