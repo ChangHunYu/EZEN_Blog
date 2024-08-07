@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 public class PostService {
@@ -46,5 +47,23 @@ public class PostService {
             .orElseThrow(() -> new RuntimeException("Post not found"));
 
         return post.getOrderedImageNames();
+    }
+
+    public PostDetailResponse findById(Long id) {
+        Post post = postRepository.findById(id)
+                .orElse(null);
+
+        if (post == null) {
+            throw new NoSuchElementException("게시글을 찾을 수 없습니다.");
+        }
+
+        return new PostDetailResponse(
+                post.getId(),
+                post.getTitle(),
+                post.getContent(),
+                post.getUser(),
+                post.getComments(),
+                post.getImages()
+        );
     }
 }
