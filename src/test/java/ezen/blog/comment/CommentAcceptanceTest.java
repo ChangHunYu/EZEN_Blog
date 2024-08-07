@@ -169,4 +169,40 @@ class CommentAcceptanceTest {
         Assertions.assertThat(responseDTO.createdAt()).isBefore(LocalDateTime.now());
     }
 
+    @Test
+    @DisplayName("Comment update 테스트")
+    void update() {
+        //given
+        CommentRequestDTO requestDTO1 = CommentRequestDTO.builder()
+                .content("크롬이 쓴 댓글")
+                .userNickname(user2.getNickname())
+                .postId(post1.getId())
+                .build();
+        CommentResponseDTO createDTO = commentService.create(requestDTO1);
+        em.clear();
+
+
+
+        //when
+        CommentRequestDTO updateRequest1 = CommentRequestDTO.builder()
+                .content("크롬이 쓴 댓글 수정")
+                .userNickname(user2.getNickname())
+                .postId(post1.getId())
+                .build();
+
+        ExtractableResponse<Response> response = RestAssured
+                .given().log().all()
+                .contentType(ContentType.JSON)
+                .body(updateRequest1)
+                .when()
+                .put("/comments/"+createDTO.id())
+                .then().log().all()
+                .extract();
+        CommentResponseDTO responseDTO = response.jsonPath().getObject("", CommentResponseDTO.class);
+
+        //then
+        Assertions.assertThat(responseDTO.userNickname()).isEqualTo(updateRequest1.userNickname());
+        Assertions.assertThat(responseDTO.postId()).isEqualTo(updateRequest1.postId());
+        Assertions.assertThat(responseDTO.content()).isEqualTo(updateRequest1.content());
+    }
 }

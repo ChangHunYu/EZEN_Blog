@@ -5,11 +5,11 @@ import ezen.blog.post.PostRepository;
 import ezen.blog.user.User;
 import ezen.blog.user.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
-import org.apache.ibatis.javassist.NotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.Objects;
 
 @Service
 public class CommentService {
@@ -23,6 +23,7 @@ public class CommentService {
         this.postRepository = postRepository;
     }
 
+    @Transactional
     public CommentResponseDTO create(CommentRequestDTO request) {
         User user = userRepository.findByNickname(request.userNickname());
         Post post = postRepository.findById(request.postId()).orElse(null);
@@ -73,6 +74,30 @@ public class CommentService {
                 .userNickname(comment.getUser().getNickname())
                 .content(comment.getContent())
                 .createdAt(comment.getCreatedAt())
+                .build();
+    }
+
+    @Transactional
+    public CommentResponseDTO update(Long id, CommentRequestDTO request) {
+        Comment comment = commentRepository.findById(id).orElse(null);
+        if (comment == null) {
+            throw new EntityNotFoundException("Comment Not Found");
+        }
+
+        if (!comment.getUser().getNickname().equals(request.userNickname())) {
+            throw new IllegalArgumentException("잘못된 접근");
+        }
+
+        comment.updateContent(request.content());
+
+        Comment savedComment = commentRepository.save(comment);
+
+        return CommentResponseDTO.builder()
+                .id(savedComment.getId())
+                .postId(savedComment.getPost().getId())
+                .userNickname(savedComment.getUser().getNickname())
+                .content(savedComment.getContent())
+                .createdAt(savedComment.getCreatedAt())
                 .build();
     }
 }
