@@ -15,12 +15,15 @@ public class PostService {
 
     private final MinioService minioService;
 
+    private final PostMapper postMapper;
+
     @Value("${minio.buckets.postImage}")
     private String POST_IMAGE_BUCKET = "post-images";
 
-    public PostService(PostRepository postRepository, MinioService minioService) {
+    public PostService(PostRepository postRepository, MinioService minioService, PostMapper postMapper) {
         this.postRepository = postRepository;
         this.minioService = minioService;
+        this.postMapper = postMapper;
     }
 
     public void addImageToPost(Long postId, MultipartFile file) throws Exception {
@@ -65,5 +68,9 @@ public class PostService {
                 post.getComments(),
                 post.getImages()
         );
+    }
+
+    public List<PostListResponse> findAll() {
+        return postMapper.findAll();
     }
 }
