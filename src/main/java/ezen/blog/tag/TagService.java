@@ -70,4 +70,18 @@ public class TagService {
                 .name(savedTag.getName())
                 .build();
     }
+
+    // findById 대신 tagRepository에 'findByIdAndIsDeletedFalse' 라는 Jpa Query를 추가하여 사용할지에 대한 검토 필요
+    // softDelete vs hardDelete 에 대한 검토 필요
+    // tag.delete(); -> 에러 발생 - 추후 조치 필요
+    @Transactional
+    public void delete(Long id) {
+        Tag tag = tagRepository.findByIdAndIsDeletedFalse(id);
+        if (tag == null) {
+            throw new EntityNotFoundException("Tag Not Found");
+        }
+
+//        tag.delete();
+        tagRepository.save(tag);
+    }
 }
