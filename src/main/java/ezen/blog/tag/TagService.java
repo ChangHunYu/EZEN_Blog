@@ -12,13 +12,9 @@ import java.util.NoSuchElementException;
 public class TagService {
 
     private final TagRepository tagRepository;
-    private final PostRepository postRepository;
-    private final PostTag postTag;
 
-    public TagService(TagRepository tagRepository, PostRepository postRepository, PostTag postTag) {
+    public TagService(TagRepository tagRepository) {
         this.tagRepository = tagRepository;
-        this.postRepository = postRepository;
-        this.postTag = postTag;
     }
 
     @Transactional
