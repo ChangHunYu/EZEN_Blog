@@ -1,12 +1,9 @@
 package ezen.blog.tag;
 
-import ezen.blog.post.Post;
-import ezen.blog.post.PostRepository;
-import ezen.blog.posttag.PostTag;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
-import java.util.NoSuchElementException;
+import java.util.List;
 
 @Service
 public class TagService {
@@ -29,4 +26,13 @@ public class TagService {
                 .name(savedTag.getName())
                 .build();
     }
+
+    public List<TagResponseDto> findAll() {
+        List<Tag> tags = tagRepository.findAll();
+        return tags.stream()
+                .map(t -> TagResponseDto.builder()
+                        .name(t.getName())
+                        .build())
+                .toList();
+}
 }

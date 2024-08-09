@@ -2,10 +2,9 @@ package ezen.blog.tag;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/tags")
@@ -22,5 +21,12 @@ public class TagController {
         TagResponseDto responseDto = tagService.create(request);
 
         return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<TagResponseDto>> findAll() {
+        List<TagResponseDto> tagResponseDtos = tagService.findAll();
+
+        return new ResponseEntity<>(tagResponseDtos, HttpStatus.OK);
     }
 }
