@@ -44,6 +44,7 @@ public class TagController {
         return new ResponseEntity<>(tagResponseDto, HttpStatus.OK);
     }
 
+    // ResponseEntity에서 반환할 것이 없다고 판단되어, 빈 리스트들 만들었으나 error가 발생하여 ResponseEntity에서 리스트를 제거함
     @DeleteMapping("/{id}")
     public ResponseEntity delete(@PathVariable Long id) {
         tagService.delete(id);
