@@ -28,7 +28,6 @@ public class TagService {
                 .build();
     }
 
-    @Transactional
     public List<TagResponseDto> findAll() {
         List<Tag> tags = tagRepository.findAll();
         return tags.stream()
