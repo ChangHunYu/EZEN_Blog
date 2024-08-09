@@ -29,4 +29,11 @@ public class TagController {
 
         return new ResponseEntity<>(tagResponseDtos, HttpStatus.OK);
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<TagResponseDto> findById(@PathVariable Long id) {
+        TagResponseDto tagResponseDto = tagService.findById(id);
+
+        return new ResponseEntity<>(tagResponseDto, HttpStatus.OK);
+    }
 }
