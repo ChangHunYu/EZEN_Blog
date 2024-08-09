@@ -28,6 +28,7 @@ public class TagService {
                 .build();
     }
 
+    @Transactional
     public List<TagResponseDto> findAll() {
         List<Tag> tags = tagRepository.findAll();
         return tags.stream()
@@ -36,8 +37,9 @@ public class TagService {
                         .name(t.getName())
                         .build())
                 .toList();
-}
+    }
 
+    @Transactional
     public TagResponseDto findById(Long id) {
         Tag tag = tagRepository.findById(id)
                 .orElse(null);
@@ -47,6 +49,25 @@ public class TagService {
         return TagResponseDto.builder()
                 .id(tag.getId())
                 .name(tag.getName())
+                .build();
+    }
+
+    // 기존에 태그를 작성했던 유저가 아니라면 태그를 수정할 수 없게 막을 수 있는 조건문이 필요함 - 작성 예정
+    @Transactional
+    public TagResponseDto update(Long id, TagRequestDto request) {
+        Tag tag = tagRepository.findById(id)
+                .orElse(null);
+        if (tag == null) {
+            throw new EntityNotFoundException("Tag Not Found");
+        }
+
+        tag.updateName(request.name());
+
+        Tag savedTag = tagRepository.save(tag);
+
+        return TagResponseDto.builder()
+                .id(savedTag.getId())
+                .name(savedTag.getName())
                 .build();
     }
 }

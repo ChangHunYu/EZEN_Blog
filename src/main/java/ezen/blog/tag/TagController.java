@@ -36,4 +36,11 @@ public class TagController {
 
         return new ResponseEntity<>(tagResponseDto, HttpStatus.OK);
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<TagResponseDto> update(@PathVariable Long id, @RequestBody TagRequestDto request) {
+        TagResponseDto tagResponseDto = tagService.update(id, request);
+
+        return new ResponseEntity<>(tagResponseDto, HttpStatus.OK);
+    }
 }
